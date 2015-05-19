@@ -48,13 +48,13 @@ function Form() {
         if (number.length === 15) {
           resolve();
         } else {
-          reject(_this.type + ' cards should be exactly 15 digits');
+          reject(`(${number.length}/15)`);
         }
       default:
         if (number.length === 16) {
           resolve();
         } else {
-          reject('card number should be exactly 16 digits');
+          reject(`(${number.length}/16)`);
         }
       }
     }).then(function() {
@@ -219,6 +219,7 @@ Form.prototype = {
   },
   toJSON: function() {
     return Ember.merge(this.cursor().toJSON(), {
+      type: this.type,
       isValid: this.isValid,
       isInvalid: this.isInvalid,
       progress: this.progress

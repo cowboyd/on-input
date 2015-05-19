@@ -1,5 +1,14 @@
 <div class="form-container {{form.type}}">
-  <input placeholder="Card number" type="text" name="number">
+  <div style="layout: inline-block;">
+    <input placeholder="Card number" type="text" name="number"> <span style="font-size: 16px;">{{form.type}}</span>
+    <div style="font-size: 16px;">
+    {{#if form.rules.numberLongEnough.isRejected}}
+      {{form.rules.numberLongEnough.reason}}
+    {{else if form.rules.numberPassesLuhnCheck.isRejected}}
+      {{form.rules.numberPassesLuhnCheck.reason}}
+    {{/if}}
+    </div>
+  </div>
   <input placeholder="Full name" type="text" name="name"><br/>
   <input placeholder="MM/YY" type="text" name="exp">
   <input placeholder="CVC" type="text" name="cvc"><br/>
