@@ -261,9 +261,12 @@
           </aside>
         </section>
         <section>
+          <h2> Hello. </h2>
           <div data-component="credit-card"></div>
+          <p>I believe we've already met.</p>
         </section>
         <section>
+          <h2>Simple.</h2>
           <pre><code>
 $('form').on('submit', function() {
   $.post('/api/cards', $(this).serializeJSON());
@@ -271,7 +274,11 @@ $('form').on('submit', function() {
           </code></pre>
         </section>
         <section>
-          <!-- I don't want to submit the form if it isn't valid -->
+          <h2>Requirement:</h2>
+          <h3>I don't want to submit the form if it isn't valid</h3>
+        </section>
+        <section>
+          <h2>Easy.</h2>
           <pre><code>
 $('form').validator({
   "input[name=card-number]": {
