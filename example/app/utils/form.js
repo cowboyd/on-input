@@ -14,7 +14,7 @@ function Form() {
     input: {
       name: "",
       number: "",
-      ccv: "",
+      cvc: "",
       exp: ""
     },
     type: null,
@@ -22,7 +22,7 @@ function Form() {
       numberLongEnough: {},
       numberPassesLuhnCheck: {},
       expIsValid: {},
-      ccvIsValid: {},
+      cvcIsValid: {},
       nameIsValid: {}
     },
     progress: {
@@ -68,7 +68,7 @@ function Form() {
     });
   });
   this.reference(['input', 'exp']).observe(function(path, newValue, oldValue) {
-    const exp = newValue.getIn(path);
+    const exp = newValue.getIn(['input', 'exp']);
     _this.validate('expIsValid', function(resolve, reject) {
       if (!exp) {
         reject("can't be blank");
@@ -82,14 +82,14 @@ function Form() {
       }
     });
   });
-  this.reference(['input', 'ccv']).observe(function(path, newValue, oldValue) {
-    const ccv = newValue.getIn(path);
-    _this.validate('ccvIsValid', function(resolve, reject) {
-      if (!ccv) {
+  this.reference(['input', 'cvc']).observe(function(path, newValue, oldValue) {
+    const cvc = newValue.getIn(['input', 'cvc']);
+    _this.validate('cvcIsValid', function(resolve, reject) {
+      if (!cvc) {
         reject("can't be blank");
       } else {
-        var ccvRegex = /\d{3,4}/;
-        if (ccvRegex.test(ccv)) {
+        var cvcRegex = /\d{3,4}/;
+        if (cvcRegex.test(cvc)) {
           resolve();
         } else {
           reject("invalid security code");
@@ -98,7 +98,7 @@ function Form() {
     });
   });
   this.reference(['input', 'name']).observe(function(path, newValue, oldValue) {
-    const name = newValue.getIn(path);
+    const name = newValue.getIn(['input', 'name']);
     _this.validate('nameIsValid', function(resolve, reject) {
       if (!name) {
         reject("can't be blank");
