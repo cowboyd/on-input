@@ -19,11 +19,21 @@ function Form() {
     },
     type: null,
     rules: {
-      numberLongEnough: {},
-      numberPassesLuhnCheck: {},
-      expIsValid: {},
-      cvcIsValid: {},
-      nameIsValid: {}
+      numberLongEnough: {
+        isNotFulfilled: true
+      },
+      numberPassesLuhnCheck: {
+        isNotFulfilled: true
+      },
+      expIsValid: {
+        isNotFulfilled: true
+      },
+      cvcIsValid: {
+        isNotFulfilled: true
+      },
+      nameIsValid: {
+        isNotFulfilled: true
+      }
     },
     progress: {
 
@@ -158,6 +168,7 @@ Form.prototype = {
     _this.cursor(['rules', ruleName]).update(function(attrs) {
       return attrs.merge({
         isFulfilled: false,
+        isNotFulfilled: true,
         isRejected: false,
         isSettled: false,
         isPending: true
@@ -167,6 +178,7 @@ Form.prototype = {
       _this.cursor(['rules', ruleName]).update(function(attrs) {
         return attrs.merge({
           isFulfilled: true,
+          isNotFulfilled: false,
           isRejected: false,
           isSettled: true,
           isPending: false,
@@ -177,6 +189,7 @@ Form.prototype = {
       _this.cursor(['rules', ruleName]).update(function(attrs) {
         return attrs.merge({
           isFulfilled: false,
+          isNotFulfilled: true,
           isRejected: true,
           isSettled: true,
           isPending: false,
@@ -213,6 +226,9 @@ Form.prototype = {
       }
     }
     return true;
+    return rules.reduce(function(currentValue, rule) {
+      return currentValue && rule.isFulfilled;
+    }, true);
   },
   get isInvalid() {
     return !this.isValid;

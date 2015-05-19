@@ -1,0 +1,9 @@
+{{#demo-frame}}
+  {{#x-form as |form|}}
+    <div style="text-align: left">
+      Card Type: {{form.type}}
+    </div>
+    <input placeholder="Card number" type="text" name="number" autocomplete="off">
+    <button disabled={{form.rules.numberPassesLuhnCheck.isNotFulfilled}}>Submit</button>
+  {{/x-form}}
+{{/demo-frame}}

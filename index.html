@@ -485,6 +485,10 @@ $('form').on('submit', ()=> {
           <img src="images/walter-sobchak-homework.jpg" style="width: 80%">
         </section>
         <section>
+          <h2>Requirement:</h2>
+          <h3>I don't want to submit the form if it isn't valid</h3>
+        </section>
+        <section>
           <h2>Use MVC</h2>
           A form's values is a <em>pure function</em> of it's inputs
         </section>
@@ -526,7 +530,35 @@ form.isInvalid /* false */
           </code></pre>
         </section>
         <section>
-
+          <pre><code class="handlebars">
+Card Type: {{form.type}}
+<input placeholder="Card number" type="text" name="number">
+<button disabled={{form.isNotValid}}>Submit</button>
+          </code></pre>
+        </section>
+        <section>
+          <div data-component="simple-validation">
+        </section>
+        <section>
+          <h2>Requirement</h2>
+          <p>
+            I want validation to happen every time a field changes
+          </p>
+        </section>
+        <section>
+          <h2>Eliminate State</h2>
+          <img src="images/walter-sobchak-gun.png">
+          <p>
+            Create a new form for your computation every time
+          </p>
+        </section>
+        <section>
+          <pre><code class="javascript">
+$('form').on('input', function() {
+  const form = new Form($(this).serialize());
+  update(form);
+})
+          </code></pre>
         </section>
         <section>
 
@@ -864,41 +896,41 @@ Reveal.addEventListener( 'customevent', function() {
           </p>
         </section>
 
+          </div>
+
       </div>
 
-    </div>
+      <script src="lib/js/head.min.js"></script>
+      <script src="js/reveal.js"></script>
 
-    <script src="lib/js/head.min.js"></script>
-    <script src="js/reveal.js"></script>
+      <script src="example/dist/assets/vendor.js"></script>
+      <script src="example/dist/assets/example.js"></script>
 
-    <script src="example/dist/assets/vendor.js"></script>
-    <script src="example/dist/assets/example.js"></script>
+      <script>
 
-    <script>
+       // Full list of configuration options available at:
+       // https://github.com/hakimel/reveal.js#configuration
+       Reveal.initialize({
+         controls: false,
+         progress: false,
+         history: true,
+         center: true,
 
-     // Full list of configuration options available at:
-     // https://github.com/hakimel/reveal.js#configuration
-     Reveal.initialize({
-       controls: false,
-       progress: false,
-       history: true,
-       center: true,
+         //transition: 'slide', // none/fade/slide/convex/concave/zoom
+         transition: 'none',
 
-       //transition: 'slide', // none/fade/slide/convex/concave/zoom
-       transition: 'none',
+         // Optional reveal.js plugins
+         dependencies: [
+           { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+           { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+           { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+           { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+           { src: 'plugin/zoom-js/zoom.js', async: true },
+           { src: 'plugin/notes/notes.js', async: true }
+         ]
+       });
 
-       // Optional reveal.js plugins
-       dependencies: [
-         { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-         { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-         { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-         { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
-         { src: 'plugin/zoom-js/zoom.js', async: true },
-         { src: 'plugin/notes/notes.js', async: true }
-       ]
-     });
-
-    </script>
+      </script>
 
   </body>
 </html>
