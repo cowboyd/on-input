@@ -67,7 +67,21 @@
           </h2>
         </section>
         <section>
-          <h3>The New Render()</h3>
+          <h1>FP</h1>
+          <p>The truth is that we've been gradually doing more and more functional-style programming for years.</p>
+        </section>
+        <section>
+          <h2>MVC</h2>
+          <p>
+            The view is a <em>pure function</em> of the model
+          </p>
+          <aside class="notes">
+            Subject of my talk here last year.
+            First gained some real traction with Backbone.
+          </aside>
+        </section>
+        <section>
+          <h3>The New MVC</h3>
           <ul style="display: inline-block; float: right; margin-right: 100px; margin-top: 50px">
             <li>One-Way</li>
             <li>Side-Effect Free</li>
@@ -76,35 +90,164 @@
           <span style="display: inline-block; float: right; transform: scale(2,3.2); position: relative; top: 95px; left: -20px">↓</span>
 
           <svg width="50%" height="550" viewBox="0 0 500 225" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet">
-          <g transform="scale(.75,.75)">
-            <title>Layer 1</title>
-            <g class="active-path">
-              <polyline class="graphEdge" id="svg_18" points="397.74151611328125,401.7062072753906 422.5,418.2488708496094 447.25848388671875,434.7915344238281" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
-              <polyline class="graphEdge" id="svg_17" points="311.259521484375,273.74151611328125 331.488037109375,312.5 351.7165832519531,351.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
-              <polyline class="graphEdge" id="svg_16" points="356.25994873046875,193.2415313720703 336.79949951171875,215.75 317.3390197753906,238.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
-              <polyline class="graphEdge" id="svg_14" points="299.64306640625,110.64816284179688 325.7007751464844,125.7142562866211 351.75848388671875,140.7803497314453" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
-              <circle fill="#cccccc" stroke-width="0" cx="385.00001" cy="160" r="33.24153" id="svg_1" class="graphNode" stroke="#000000"></circle>
-              <circle fill="#cccccc" stroke-width="0" cx="301.99999" cy="256" r="17.74152" id="svg_3" class="graphNode" stroke="#000000"></circle>
-              <circle fill="#cccccc" stroke-width="0" cx="367.49998" cy="381.5" r="30.24152" id="svg_5" class="graphNode" stroke="#000000"></circle>
-              <circle fill="#cccccc" stroke-width="0" cx="478.99998" cy="456" r="31.74152" id="svg_6" class="graphNode" stroke="#000000"></circle>
-            </g>
-            <g>
+            <g transform="scale(.75,.75)">
+              <title>Layer 1</title>
+              <g class="active-path">
+                <polyline class="graphEdge" id="svg_18" points="397.74151611328125,401.7062072753906 422.5,418.2488708496094 447.25848388671875,434.7915344238281" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge" id="svg_17" points="311.259521484375,273.74151611328125 331.488037109375,312.5 351.7165832519531,351.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge" id="svg_16" points="356.25994873046875,193.2415313720703 336.79949951171875,215.75 317.3390197753906,238.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge" id="svg_14" points="299.64306640625,110.64816284179688 325.7007751464844,125.7142562866211 351.75848388671875,140.7803497314453" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <circle fill="#cccccc" stroke-width="0" cx="385.00001" cy="160" r="33.24153" id="svg_1" class="graphNode" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="301.99999" cy="256" r="17.74152" id="svg_3" class="graphNode" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="367.49998" cy="381.5" r="30.24152" id="svg_5" class="graphNode" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="478.99998" cy="456" r="31.74152" id="svg_6" class="graphNode" stroke="#000000"></circle>
+              </g>
+              <g>
                 <polyline class="graphEdge graphEdge--fade" id="svg_22" points="122.91644287109375,282.74151611328125 89.65998840332031,326.5 56.403541564941406,370.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
                 <polyline class="graphEdge graphEdge--fade" id="svg_21" points="149.36302185058594,282.74151611328125 145.17288208007812,323.5 140.98275756835938,364.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
                 <polyline class="graphEdge graphEdge--fade" id="svg_20" points="177.00497436523438,282.74151611328125 207.52903747558594,335 238.0531005859375,387.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
                 <polyline class="graphEdge graphEdge--fade" id="svg_19" points="217.244140625,132.64306640625 197.04708862304688,167.45077514648438 176.8500213623047,202.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
                 <polyline class="graphEdge graphEdge--fade" id="svg_15" points="417.0819396972656,193.2415313720703 428.6715087890625,205.25 440.2610778808594,217.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+              </g>
+              <g>
+                <circle fill="#cccccc" stroke-width="0" cx="467.99998" cy="246" r="28.74152" id="svg_4" class="graphNode graphNode--fade" stroke="#000000"></circle>
+                <circle fill="#007fff" stroke-width="0" cx="247.5" cy="80.5" r="52.14306" id="svg_2" class="graphNode graphNode--blue" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="153.49999" cy="242.5" r="40.24152" id="svg_7" class="graphNode graphNode--fade" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="39.49999" cy="392.5" r="22.24152" stroke="#000000" id="svg_8" class="graphNode graphNode--fade"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="136.99999" cy="403" r="38.74152" id="svg_9" class="graphNode graphNode--fade" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="248.99999" cy="406" r="18.74152" id="svg_10" class="graphNode graphNode--fade" stroke="#000000"></circle>
+              </g>
             </g>
-            <g>
-              <circle fill="#cccccc" stroke-width="0" cx="467.99998" cy="246" r="28.74152" id="svg_4" class="graphNode graphNode--fade" stroke="#000000"></circle>
-              <circle fill="#007fff" stroke-width="0" cx="247.5" cy="80.5" r="52.14306" id="svg_2" class="graphNode graphNode--blue" stroke="#000000"></circle>
-              <circle fill="#cccccc" stroke-width="0" cx="153.49999" cy="242.5" r="40.24152" id="svg_7" class="graphNode graphNode--fade" stroke="#000000"></circle>
-              <circle fill="#cccccc" stroke-width="0" cx="39.49999" cy="392.5" r="22.24152" stroke="#000000" id="svg_8" class="graphNode graphNode--fade"></circle>
-              <circle fill="#cccccc" stroke-width="0" cx="136.99999" cy="403" r="38.74152" id="svg_9" class="graphNode graphNode--fade" stroke="#000000"></circle>
-              <circle fill="#cccccc" stroke-width="0" cx="248.99999" cy="406" r="18.74152" id="svg_10" class="graphNode graphNode--fade" stroke="#000000"></circle>
-            </g>
-          </g>
           </svg>
+          <aside class="notes">
+            <ul>
+              <li>The React family of frameworks really kicked this into high gear</li>
+              <li>Ember and Angular following suit.</li>
+              <li>One of our values on the server, is deterministically
+            </ul>
+            We've got all this great new hotness for rendering, but there's a problem.
+          </aside>
+        </section>
+        <section>
+          <h2>Just One-Way?</h2>
+          <p>
+            In real-world applications data flow is <em>not</em> one-way
+          </p>
+          <aside class="notes">
+            <ul><li>It's at least two way</li><li>maybe more</li></ul>
+          </aside>
+        </section>
+        <section>
+          <h3>What's Up?</h3>
+          <p>How does data make its way back to the model/server?</p>
+          <p style="display: inline-block; float: right; margin-right: 100px; margin-top: 100px; font-size: 250%;">
+            ?
+          </p>
+          <span style="display: inline-block; float: right; transform: scale(2,4) rotate(180deg); position: relative; top: 125px; left: -100px;">↓</span>
+
+          <svg width="50%" height="550" viewBox="0 0 500 225" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet">
+            <g transform="scale(.75,.75)">
+              <title>Layer 1</title>
+              <g class="active-path">
+                <polyline class="graphEdge" id="svg_18" points="397.74151611328125,401.7062072753906 422.5,418.2488708496094 447.25848388671875,434.7915344238281" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge" id="svg_17" points="311.259521484375,273.74151611328125 331.488037109375,312.5 351.7165832519531,351.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge" id="svg_16" points="356.25994873046875,193.2415313720703 336.79949951171875,215.75 317.3390197753906,238.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge" id="svg_14" points="299.64306640625,110.64816284179688 325.7007751464844,125.7142562866211 351.75848388671875,140.7803497314453" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <circle fill="#cccccc" stroke-width="0" cx="385.00001" cy="160" r="33.24153" id="svg_1" class="graphNode" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="301.99999" cy="256" r="17.74152" id="svg_3" class="graphNode" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="367.49998" cy="381.5" r="30.24152" id="svg_5" class="graphNode" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="478.99998" cy="456" r="31.74152" id="svg_6" class="graphNode" stroke="#000000"></circle>
+              </g>
+              <g>
+                <polyline class="graphEdge graphEdge--fade" id="svg_22" points="122.91644287109375,282.74151611328125 89.65998840332031,326.5 56.403541564941406,370.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge graphEdge--fade" id="svg_21" points="149.36302185058594,282.74151611328125 145.17288208007812,323.5 140.98275756835938,364.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge graphEdge--fade" id="svg_20" points="177.00497436523438,282.74151611328125 207.52903747558594,335 238.0531005859375,387.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge graphEdge--fade" id="svg_19" points="217.244140625,132.64306640625 197.04708862304688,167.45077514648438 176.8500213623047,202.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge graphEdge--fade" id="svg_15" points="417.0819396972656,193.2415313720703 428.6715087890625,205.25 440.2610778808594,217.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+              </g>
+              <g>
+                <circle fill="#cccccc" stroke-width="0" cx="467.99998" cy="246" r="28.74152" id="svg_4" class="graphNode graphNode--fade" stroke="#000000"></circle>
+                <circle fill="#007fff" stroke-width="0" cx="247.5" cy="80.5" r="52.14306" id="svg_2" class="graphNode graphNode--blue" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="153.49999" cy="242.5" r="40.24152" id="svg_7" class="graphNode graphNode--fade" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="39.49999" cy="392.5" r="22.24152" stroke="#000000" id="svg_8" class="graphNode graphNode--fade"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="136.99999" cy="403" r="38.74152" id="svg_9" class="graphNode graphNode--fade" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="248.99999" cy="406" r="18.74152" id="svg_10" class="graphNode graphNode--fade" stroke="#000000"></circle>
+              </g>
+            </g>
+          </svg>
+          <aside class="notes">
+            <ul>
+              <li>We've seen how to move data from the model, to the view where it's in a good format for the user</li>
+              <li>How do we move data back from the user towards our server?</li>
+            </ul>
+          </aside>
+        </section>
+        <section>
+          <h2>Number One Answer:</h2>
+          <h3>callback</h3>
+        </section>
+        <section>
+          <h2>Callbacks</h2>
+          <img src="images/eff-you.jpg" style="width: 50%;"/>
+          <aside class="notes">
+            <ul>
+              <li>Callbacks are everything we hate!</li>
+              <li>everything we've been spending years of lives to eradicate!</li>
+              <li>imperative, side effects, they mess around with shared state</li>
+            </ul>
+          </aside>
+        </section>
+        <section>
+          <h3>User Experience</h3>
+          <p style="display: inline-block; float: right; margin-right: 100px; margin-top: 50px; font-size: 250%;">
+            <img data-fragment-index="0" class="fragment" src="images/eff-you.jpg" style="width: 200px">
+          </p>
+          <span class="fragment" data-fragment-index="0" style="display: inline-block; float: right; transform: scale(2,4) rotate(180deg); position: relative; top: 125px; left: -100px;">↓</span>
+
+          <svg width="50%" height="550" viewBox="0 0 500 225" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet">
+            <g transform="scale(.75,.75)">
+              <title>Layer 1</title>
+              <g class="active-path">
+                <polyline class="graphEdge" id="svg_18" points="397.74151611328125,401.7062072753906 422.5,418.2488708496094 447.25848388671875,434.7915344238281" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge" id="svg_17" points="311.259521484375,273.74151611328125 331.488037109375,312.5 351.7165832519531,351.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge" id="svg_16" points="356.25994873046875,193.2415313720703 336.79949951171875,215.75 317.3390197753906,238.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge" id="svg_14" points="299.64306640625,110.64816284179688 325.7007751464844,125.7142562866211 351.75848388671875,140.7803497314453" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <circle fill="#cccccc" stroke-width="0" cx="385.00001" cy="160" r="33.24153" id="svg_1" class="graphNode" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="301.99999" cy="256" r="17.74152" id="svg_3" class="graphNode" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="367.49998" cy="381.5" r="30.24152" id="svg_5" class="graphNode" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="478.99998" cy="456" r="31.74152" id="svg_6" class="graphNode" stroke="#000000"></circle>
+              </g>
+              <g>
+                <polyline class="graphEdge graphEdge--fade" id="svg_22" points="122.91644287109375,282.74151611328125 89.65998840332031,326.5 56.403541564941406,370.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge graphEdge--fade" id="svg_21" points="149.36302185058594,282.74151611328125 145.17288208007812,323.5 140.98275756835938,364.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge graphEdge--fade" id="svg_20" points="177.00497436523438,282.74151611328125 207.52903747558594,335 238.0531005859375,387.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge graphEdge--fade" id="svg_19" points="217.244140625,132.64306640625 197.04708862304688,167.45077514648438 176.8500213623047,202.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+                <polyline class="graphEdge graphEdge--fade" id="svg_15" points="417.0819396972656,193.2415313720703 428.6715087890625,205.25 440.2610778808594,217.25848388671875" stroke="#000000" stroke-width="5" fill="none" stroke-dasharray="5,5"></polyline>
+              </g>
+              <g>
+                <circle fill="#cccccc" stroke-width="0" cx="467.99998" cy="246" r="28.74152" id="svg_4" class="graphNode graphNode--fade" stroke="#000000"></circle>
+                <circle fill="#007fff" stroke-width="0" cx="247.5" cy="80.5" r="52.14306" id="svg_2" class="graphNode graphNode--blue" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="153.49999" cy="242.5" r="40.24152" id="svg_7" class="graphNode graphNode--fade" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="39.49999" cy="392.5" r="22.24152" stroke="#000000" id="svg_8" class="graphNode graphNode--fade"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="136.99999" cy="403" r="38.74152" id="svg_9" class="graphNode graphNode--fade" stroke="#000000"></circle>
+                <circle fill="#cccccc" stroke-width="0" cx="248.99999" cy="406" r="18.74152" id="svg_10" class="graphNode graphNode--fade" stroke="#000000"></circle>
+              </g>
+            </g>
+          </svg>
+          <aside class="notes">
+            <ul>
+              <li>We've seen how to move data from the model, to the view where it's in a good format for the user</li>
+              <li>How do we move data back from the user towards our server?</li>
+            </ul>
+          </aside>
+        </section>
+        <section>
+          <h2>Is there a better way?</h2>
+        </section>
+        <section data-background="#4e719f">
+        </section>
+        <section>
+          <img src="images/walter-sobchak-homework.jpg" style="width: 80%">
         </section>
         <section>
           <div data-component="credit-card"></div>
