@@ -4,6 +4,10 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 var app = new EmberApp();
 
+app.import('vendor/immutable.js');
+app.import('vendor/immstruct.js');
+
+
 // Use `app.import` to add additional libraries to the generated
 // output files.
 //

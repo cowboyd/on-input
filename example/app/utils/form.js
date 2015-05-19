@@ -11,7 +11,12 @@ const JCB_REGEX = /^(?:2131|1800|35)/;
 function Form() {
   const _this = this;
   this.struct = immstruct({
-    input: {},
+    input: {
+      name: "",
+      number: "",
+      ccv: "",
+      exp: ""
+    },
     type: null,
     rules: {
       numberLongEnough: {},
@@ -24,9 +29,12 @@ function Form() {
 
     }
   });
-  this.ref = this.reference();
-  this.reference(['input', 'number']).observe(function(newValue, oldValue, path) {
-    const number = newValue.getIn(path);
+  this.reference(['input', 'number']).observe(function(path, newValue, oldValue) {
+    console.log("oldValue = ", oldValue);
+    console.log("newValue = ", newValue);
+    console.log("path = ", path);
+    const number = newValue.getIn(['input', 'number']);
+    console.log("number = ", number);
     _this.validate('numberLongEnough', function(resolve, reject) {
       if (!number || number.length === 0) {
         reject("can't be blank");
@@ -59,7 +67,7 @@ function Form() {
       });
     });
   });
-  this.reference(['input', 'exp']).observe(function(newValue, oldValue, path) {
+  this.reference(['input', 'exp']).observe(function(path, newValue, oldValue) {
     const exp = newValue.getIn(path);
     _this.validate('expIsValid', function(resolve, reject) {
       if (!exp) {
@@ -74,7 +82,7 @@ function Form() {
       }
     });
   });
-  this.reference(['input', 'ccv']).observe(function(newValue, oldValue, path) {
+  this.reference(['input', 'ccv']).observe(function(path, newValue, oldValue) {
     const ccv = newValue.getIn(path);
     _this.validate('ccvIsValid', function(resolve, reject) {
       if (!ccv) {
@@ -89,7 +97,7 @@ function Form() {
       }
     });
   });
-  this.reference(['input', 'name']).observe(function(newValue, oldValue, path) {
+  this.reference(['input', 'name']).observe(function(path, newValue, oldValue) {
     const name = newValue.getIn(path);
     _this.validate('nameIsValid', function(resolve, reject) {
       if (!name) {
@@ -182,7 +190,7 @@ Form.prototype = {
     return this.struct.reference(path);
   },
   cursor: function(path) {
-    return this.ref.cursor(path);
+    return this.struct.cursor(path);
   },
   get type() {
     const number = this.cursor("input").get('number');
@@ -196,11 +204,6 @@ Form.prototype = {
   },
   get input() {
     return this.cursor('input').toJSON();
-  },
-  set input(input) {
-    for (var property in input) {
-      this.cursor('input').set(property, input[property]);
-    }
   },
   get isValid() {
     const rules = this.rules;
@@ -219,6 +222,11 @@ Form.prototype = {
       isValid: this.isValid,
       isInvalid: this.isInvalid,
       progress: this.progress
+    });
+  },
+  set: function(name, value) {
+    this.struct.cursor('input').update(function(map) {
+      return map.set(name, value);
     });
   }
 };
