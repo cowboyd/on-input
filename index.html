@@ -65,6 +65,9 @@
           <h2>
             You're just a <em>Hask-hole</em>
           </h2>
+          <aside class="notes">
+            we'll hear more from him later.
+          </aside>
         </section>
         <section>
           <h1>FP</h1>
@@ -252,6 +255,168 @@
             </div>
             <a href="http://twitter.com/cowboyd">@cowboyd</a>
           </p>
+          <aside class="notes">
+            I think there is. I think we can do better than callbacks.
+            I think we can use the same techniques we learned from the rendering side of things
+          </aside>
+        </section>
+        <section>
+          <pre><code>
+$('form').on('submit', function() {
+  $.post('/api/cards', $(this).serializeJSON());
+});
+          </code></pre>
+        </section>
+        <section>
+          <!-- I don't want to submit the form if it isn't valid -->
+          <pre><code>
+$('form').validator({
+  "input[name=card-number]": {
+    validations: {
+      lunCheck: function(value) {/* isValidLuhn(value)*/ }
+    },
+    errorMessageSelector: ".card-number-errors"
+  } //etc.
+}).on('submit', function(e) {
+  const validation = $(this).validate(); //validation plugin
+  if (validation.passed) {
+    $.post('/api/cards', $(this).serializeJSON());
+  } else {
+    e.preventDefault();
+  }
+});
+          </code></pre>
+        </section>
+        <section>
+          <!-- //I want to validate every time anything changes. -->
+          <pre><code style="max-height: 500px;">
+$('form').validator({
+  "input[name=card-number]": {
+    validations: {
+      lunCheck: function(value) {/* isValidLuhn(value)*/ }
+    },
+    errorMessageSelector: ".card-name-errors"
+  } //etc.
+}).on('submit', function(e) {
+  const validation = $(this).validate(); //validation plugin
+  if (validation.passed) {
+    $.post('/api/cards', $(this).serializeJSON());
+  } else {
+    e.preventDefault();
+  }
+}).on('change', function() {
+  const validation = $(this).validate();
+});
+          </code></pre>
+        </section>
+        <section>
+          <!-- //I don't want the submit button to be enabled unless the form is valid -->
+          <pre><code>
+$('form').validator({
+  "input[name=card-number]": {
+    validations: {
+      lunCheck: function(value) {/* isValidLuhn(value)*/ }
+    },
+    errorMessageSelector: ".card-name-errors"
+  } //etc.
+}).on('submit', function(e) {
+  const validation = $(this).validate(); //validation plugin
+  if (validation.passed) {
+    $.post('/api/cards', $(this).serializeJSON());
+  } else {
+    e.preventDefault();
+  }
+}).on('change', function() {
+  const validation = $(this).validate();
+  $(this).find('input[type=submit]').prop('disabled', !validation.passed);
+});
+          </code></pre>
+        </section>
+        <section>
+          <!-- // I want there to be an asynchronous lookup on the server to see if this card -->
+          <!-- // is in our fraud database. -->
+          <pre><code style="font-size: 12px; line-height: 14px;">
+let isSafeCardNumber = false;
+
+$('form').validator({
+  "input[name=card-number]": {
+    validations: {
+      lunCheck: function(value) {/* isValidLuhn(value)*/ }
+    },
+    errorMessageSelector: ".card-name-errors"
+  } //etc.
+}).on('submit', function(e) {
+  const validation = $(this).validate(); //validation plugin
+  if (validation.passed && isSafeCardNumber) {
+    $.post('/api/cards', $(this).serializeJSON());
+  } else {
+    e.preventDefault();
+  }
+}).on('change', function() {
+  const validation = $(this).validate();
+  $(this).find('input[type=submit]').prop('disabled', !validation.passed);
+}).on('change', function(e) {
+  const validation = $(this).validate();
+  $(this).find('input[type=submit]').prop('disabled', !validation.passed);
+  const creditCardNumber = this.elements['card-number'];
+  if (e.target === creditCardNumber) {
+    $.get(`/api/fraud-detector/cards/${creditCardNumber.value}`).then(()=> {
+      isSafeCardNumber = true;
+    }).fail(()=> {
+      $(this).find('input[type=submit]').prop('disabled', !validation.passed);
+      isSafeCardNumber = false;
+    });
+  }
+});
+          </code></pre>
+        </section>
+        <section>
+          <!-- // I want feedback while the card number is validating against the server -->
+          <pre><code style="font-size: 12px; line-height: 14px;">
+let isSafeCardNumber = false;
+
+$('form').validator({
+  "input[name=card-number]": {
+    validations: {
+      lunCheck: function(value) {/* isValidLuhn(value)*/ }
+    },
+    errorMessageSelector: ".card-name-errors"
+  } //etc.
+}).on('submit', function(e) {
+  const validation = $(this).validate(); //validation plugin
+  if (validation.passed) {
+    $.post('/api/cards', $(this).serializeJSON());
+  } else {
+    e.preventDefault();
+  }
+}).on('change', function() {
+  const validation = $(this).validate();
+  $(this).find('input[type=submit]').prop('disabled', !validation.passed);
+}).on('change', function(e) {
+  const validation = $(this).validate();
+  $(this).find('input[type=submit]').prop('disabled', !validation.passed);
+  const creditCardNumber = this.elements['card-number'];
+  if (e.target === creditCardNumber) {
+    $(this).find('.card-name-check-spinner').toggleClass('visible', true);
+    $.get(`/api/fraud-detector/cards/${creditCardNumber.value}`).then(()=> {
+      isSafeCardNumber = true;
+    }).fail(()=> {
+      $(this).find('input[type=submit]').prop('disabled', !validation.passed);
+      isSafeCardNumber = false;
+    }).always(() => {
+      $(this).find('.card-name-check-spinner').toggleClass('visible', false);
+    });
+  }
+});
+          </code></pre>
+        </section>
+        <section>
+          <!-- how can we get back to this -->
+          <pre><code>
+$('form').on('submit', ()=> {
+  $.post('/api/cards', $(this).serializeJSON());
+});
+            </code></pre>
         </section>
         <section>
           <img src="images/walter-sobchak-homework.jpg" style="width: 80%">
