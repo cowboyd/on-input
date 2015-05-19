@@ -532,8 +532,8 @@ form.isInvalid /* false */
         <section>
           <pre><code class="handlebars">
 Card Type: {{form.type}}
-<input placeholder="Card number" type="text" name="number">
-<button disabled={{form.isNotValid}}>Submit</button>
+            <input placeholder="Card number" type="text" name="number">
+            <button disabled={{form.isNotValid}}>Submit</button>
           </code></pre>
         </section>
         <section>
@@ -560,41 +560,77 @@ $('form').on('input', function() {
 })
           </code></pre>
         </section>
+        <section>
+          <div data-component="simple-validation">
+        </section>
+
+        <section>
+          <h2>Requirement</h2>
+          <p>
+            Let's verify with the server that this card isn't in our fraud database.
+          </p>
+          <aside class="notes">
+            this is where things really started getting nasty.
+          </aside>
+        </section>
+        <section>
+          <pre><code>
+get isValid() {
+  const rules = this.rules;
+  return rules.reduce(function(currentValue, rule) {
+    return currentValue && rule.isFulfilled;
+  }, true);
+},
+          </code></pre>
+        </section>
+        <section>
+          <h1>Solution</h2>
+            <img src="images/promise-states.png" style="float: left;">
+          <p style="position: relative; top: 100px;">
+            Every validation rule is a promise
+          </p>
+        </section>
+        <section>
+          <h2>Promises</h2>
+          <ul>
+            <li>Compose Asynchronous </li>
+          </ul>
+        </section>
           </div>
 
-      </div>
+          </div>
 
-      <script src="lib/js/head.min.js"></script>
-      <script src="js/reveal.js"></script>
+          <script src="lib/js/head.min.js"></script>
+          <script src="js/reveal.js"></script>
 
-      <script src="example/dist/assets/vendor.js"></script>
-      <script src="example/dist/assets/example.js"></script>
+          <script src="example/dist/assets/vendor.js"></script>
+          <script src="example/dist/assets/example.js"></script>
 
-      <script>
+          <script>
 
-       // Full list of configuration options available at:
-       // https://github.com/hakimel/reveal.js#configuration
-       Reveal.initialize({
-         controls: false,
-         progress: false,
-         history: true,
-         center: true,
+           // Full list of configuration options available at:
+           // https://github.com/hakimel/reveal.js#configuration
+           Reveal.initialize({
+             controls: false,
+             progress: false,
+             history: true,
+             center: true,
 
-         //transition: 'slide', // none/fade/slide/convex/concave/zoom
-         transition: 'none',
+             //transition: 'slide', // none/fade/slide/convex/concave/zoom
+             transition: 'none',
 
-         // Optional reveal.js plugins
-         dependencies: [
-           { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-           { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-           { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-           { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
-           { src: 'plugin/zoom-js/zoom.js', async: true },
-           { src: 'plugin/notes/notes.js', async: true }
-         ]
-       });
+             // Optional reveal.js plugins
+             dependencies: [
+               { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+               { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+               { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+               { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+               { src: 'plugin/zoom-js/zoom.js', async: true },
+               { src: 'plugin/notes/notes.js', async: true }
+             ]
+           });
 
-      </script>
+          </script>
 
   </body>
 </html>
