@@ -296,8 +296,23 @@ $('form').validator({
   }
 });
           </code></pre>
+          <aside class="notes">
+            We pull a validation plugin off the shelf, and we only submit if it
+            tells us we passed.
+            <ul>
+              <li>most are a variation on this</li>
+              <li>responsible for stuffing things into the dom</li>
+            </ul>
+          </aside>
         </section>
         <section>
+          <h2>Requirement</h2>
+          <p>
+            I want validation to happen every time a field changes
+          </p>
+        </section>
+        <section>
+          <h2>Easy: Part 2</h2>
           <!-- //I want to validate every time anything changes. -->
           <pre><code style="max-height: 500px;">
 $('form').validator({
@@ -318,9 +333,18 @@ $('form').validator({
   const validation = $(this).validate();
 });
           </code></pre>
+          <aside class="notes">
+            This is pretty easy... Note the duplication
+          </aside>
         </section>
         <section>
-          <!-- //I don't want the submit button to be enabled unless the form is valid -->
+          <h2>Requirement</h2>
+          <p>
+            Don't enable the submit button unless the form is actually valid.
+          </p>
+        </section>
+        <section>
+          <h2>Easy Part 2.1</h2>
           <pre><code>
 $('form').validator({
   "input[name=card-number]": {
@@ -343,6 +367,13 @@ $('form').validator({
           </code></pre>
         </section>
         <section>
+          <h2>Requirement</h2>
+          <p>
+            Let's verify with the server that this card isn't in our fraud database.
+          </p>
+        </section>
+        <section>
+          <h2>Part 3: Revenge of the Sith</h2>
           <!-- // I want there to be an asynchronous lookup on the server to see if this card -->
           <!-- // is in our fraud database. -->
           <pre><code style="font-size: 12px; line-height: 14px;">
@@ -379,9 +410,23 @@ $('form').validator({
   }
 });
           </code></pre>
+          <aside class="notes">
+            <ul>
+              <li>global state because we don't when things will resolve</li>
+              <li>different codepath for different validations</li>
+              <li>I had to think realy hard to get this one right</li>
+            </ul>
+          </aside>
+        </section>
+        <section>
+          <h2>Requirement</h2>
+          <p>
+            Can we throw up a loading spinner while we're doing the fraud detection?
+          </p>
         </section>
         <section>
           <!-- // I want feedback while the card number is validating against the server -->
+          <h2>umm...</h2>
           <pre><code style="font-size: 12px; line-height: 14px;">
 let isSafeCardNumber = false;
 
@@ -419,19 +464,72 @@ $('form').validator({
   }
 });
           </code></pre>
+          <aside class="notes">
+            <ul>
+              <li>tricky set up and teardown</li>
+              <li>Can't see the difference between this slide and the last one?</li>
+              <li>hopelessly intertwined</li>
+            </ul>
+          </aside>
         </section>
         <section>
-          <!-- how can we get back to this -->
+          <h2>I just want to go home!</h2>
           <pre><code>
 $('form').on('submit', ()=> {
   $.post('/api/cards', $(this).serializeJSON());
 });
-            </code></pre>
+          </code></pre>
         </section>
         <section>
+          <h3>Remeber this guy?</h3>
           <img src="images/walter-sobchak-homework.jpg" style="width: 80%">
         </section>
         <section>
+          <h2>Use MVC</h2>
+          A form's values is a <em>pure function</em> of it's inputs
+        </section>
+        <section>
+          <pre><code>
+let form = new CardForm({
+  number: '4242424242424242'
+});
+
+form.type  /* visa */
+form.isValid /* true */
+form.isInvalid /* false */
+
+          </code></pre>
+        </section>
+        <section>
+          <pre><code>
+//form.js
+  get type() {
+    const number = this.number;
+    if (number.match(VISA_REGEX)) {return "visa";}
+    else if (number.match(MASTERCARD_REGEX)) {return "mastercard";}
+    else if (number.match(AMEX_REGEX)) {return "amex";}
+    else if (number.match(DISCOVER_REGEX)) {return "discover";}
+    else if (number.match(DINERS_CLUB_REGEX)) {return "diners";}
+    else if (number.match(JCB_REGEX)) {return "jcb";}
+    else {return undefined;}
+  },
+
+  get isValid() {
+    const rules = this.rules;
+    return rules.reduce(function(currentValue, rule) {
+      return currentValue && rule.isFulfilled;
+    }, true);
+  },
+  get isInvalid() {
+    return !this.isValid;
+  }
+          </code></pre>
+        </section>
+        <section>
+
+        </section>
+        <section>
+
           <h1>Reveal.js</h1>
           <h3>The HTML Presentation Framework</h3>
           <p>

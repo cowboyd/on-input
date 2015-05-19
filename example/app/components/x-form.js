@@ -7,15 +7,13 @@ export default Ember.Component.extend({
     this._form = new Form();
     this._form.struct.on("swap", Ember.run.bind(this, "reform"));
     this.reform();
-    window.form = this._form;
   },
-  destroy() {
-    this.form.destroy();
-    this._super.apply(this, arguments);
-  },
+  // destroy() {
+  //   this.form.destroy();
+  //   this._super.apply(this, arguments);
+  // },
   reform() {
     var json = this._form.toJSON();
-    console.log("json = ", json);
     this.set('form', json);
   },
   input: function(e) {

@@ -1,18 +1,20 @@
 {{#demo-frame}}
-<div class="form-container {{form.type}}">
-  <div style="layout: inline-block;">
-    <input placeholder="Card number" type="text" name="number"> <span style="font-size: 16px;">{{form.type}}</span>
-    <div style="font-size: 16px;">
-    {{#if form.rules.numberLongEnough.isRejected}}
-      {{form.rules.numberLongEnough.reason}}
-    {{else if form.rules.numberPassesLuhnCheck.isRejected}}
-      {{form.rules.numberPassesLuhnCheck.reason}}
-    {{/if}}
+  {{#x-form as |form|}}
+    <div class="form-container {{form.type}}">
+      <div style="layout: inline-block;">
+        <input placeholder="Card number" type="text" name="number"> <span style="font-size: 16px;">{{form.type}}</span>
+        <div style="font-size: 16px;">
+          {{#if form.rules.numberLongEnough.isRejected}}
+            {{form.rules.numberLongEnough.reason}}
+          {{else if form.rules.numberPassesLuhnCheck.isRejected}}
+            {{form.rules.numberPassesLuhnCheck.reason}}
+          {{/if}}
+        </div>
+      </div>
+      <input placeholder="Full name" type="text" name="name"><br/>
+      <input placeholder="MM/YY" type="text" name="exp">
+      <input placeholder="CVC" type="text" name="cvc"><br/>
+      <button  disabled={{form.isInvalid}}>Submit</button>
     </div>
-  </div>
-  <input placeholder="Full name" type="text" name="name"><br/>
-  <input placeholder="MM/YY" type="text" name="exp">
-  <input placeholder="CVC" type="text" name="cvc"><br/>
-  <button  disabled={{form.isInvalid}}>Submit</button>
-</div>
+  {{/x-form}}
 {{/demo-frame}}
