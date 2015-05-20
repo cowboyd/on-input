@@ -33,6 +33,9 @@ function Form() {
       },
       nameIsValid: {
         isNotFulfilled: true
+      },
+      numberPassesFraudCheck: {
+        isNotFulfilled: true
       }
     },
     progress: {
@@ -74,6 +77,14 @@ function Form() {
         } else {
           reject('invalid card number');
         }
+      });
+    }).then(function() {
+      return _this.validate('numberPassesFraudCheck', function(resolve, reject) {
+        //hax
+        window.fraudCheck = {
+          resolve: resolve,
+          reject: reject
+        };
       });
     });
   });

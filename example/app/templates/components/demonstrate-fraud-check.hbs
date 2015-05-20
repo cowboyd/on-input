@@ -1,0 +1,14 @@
+{{#demo-frame}}
+  {{#x-form as |form|}}
+    <div style="text-align: left">
+      Card Type: {{form.type}}
+    </div>
+    <input placeholder="Card number" type="text" name="number" autocomplete="off">
+    <button disabled={{form.rules.numberPassesFraudCheck.isNotFulfilled}}>Submit</button>
+    <div>
+      {{#if form.rules.numberPassesFraudCheck.isPending}}
+        psst! what should I do? <button onclick="fraudCheck.resolve()">resolve</button><button onclick="fraudCheck.reject()">reject</button>
+      {{/if}}
+    </div>
+  {{/x-form}}
+{{/demo-frame}}

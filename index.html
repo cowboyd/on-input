@@ -475,13 +475,13 @@ $('form').validator({
         <section>
           <h2>I just want to go home!</h2>
           <pre><code>
-$('form').on('submit', ()=> {
+$('form').on('submit', function() {
   $.post('/api/cards', $(this).serializeJSON());
 });
           </code></pre>
         </section>
         <section>
-          <h3>Remeber this guy?</h3>
+          <h3>Remember this guy?</h3>
           <img src="images/walter-sobchak-homework.jpg" style="width: 80%">
         </section>
         <section>
@@ -490,7 +490,7 @@ $('form').on('submit', ()=> {
         </section>
         <section>
           <h2>Use MVC</h2>
-          A form's values is a <em>pure function</em> of it's inputs
+          A form's values are a <em>pure function</em> of its inputs
         </section>
         <section>
           <pre><code>
@@ -537,7 +537,7 @@ Card Type: {{form.type}}
           </code></pre>
         </section>
         <section>
-          <div data-component="simple-validation">
+          <div data-component="simple-validation"></div>
         </section>
         <section>
           <h2>Requirement</h2>
@@ -561,7 +561,7 @@ $('form').on('input', function() {
           </code></pre>
         </section>
         <section>
-          <div data-component="simple-validation">
+          <div data-component="simple-validation"></div>
         </section>
 
         <section>
@@ -597,16 +597,78 @@ get isValid() {
           </p>
         </section>
         <section>
-          <h2>Promises</h2>
-          <p>
-            Models dependencies of operations
-          </p>
+          <h2>Ansynchrony</h2>
+          <div data-component="demonstrate-fraud-check"></div>
         </section>
         <section>
           <h2>Promises</h2>
           <p>
             flexible messaging
           </p>
+        </section>
+        <section>
+        <pre><code>
+if (!number || number.length === 0) {
+  reject("can't be blank");
+} else if (!_this.type) {
+   reject("not enough digits");
+}
+switch(_this.type) {
+ case 'diners':
+ case 'amex':
+   if (number.length === 15) {
+     resolve();
+   } else {
+     reject(`(${number.length}/15)`);
+   }
+ default:
+   if (number.length === 16) {
+     resolve();
+   } else {
+     reject(`(${number.length}/16)`);
+   }
+ }
+        </code></pre>
+        </section>
+        <section>
+          <pre><code class="handlebars">
+<input placeholder="Card number" type="text" name="number">
+{{#if rules.numberLongEnough.isRejected}}
+  {{rules.numberLongEnough.reason}}
+{{/if}}
+{{#if rules.numberPassesLuhnCheck.isRejected}}
+  {{rules.numberPassesLuhnCheck.reason}}
+{{/if}}
+          </code></pre>
+        </section>
+        <section>
+          <h2>Flexible Messaging</h2>
+          <div data-component="flexible-messaging"></div>
+        </section>
+        <section>
+          <h2>Promises</h2>
+          <p>
+            Models dependencies of operations with <code>then()</code>
+          </p>
+          <p>
+            <span class="fragment">Length</span><span class="fragment"> -> Luhn Check</span><span class="fragment"> -> Fraud Check</span>
+          </p>
+        </section>
+        <section>
+          <h2>Sequencing</h2>
+          <div data-component="show-dependencies"></div>
+        </section>
+        <section>
+          <h2>Promises</h2>
+          <ul>
+            <li>Asynchrony a breeze</li>
+            <li>Flexible Messaging</li>
+            <li>Natural Sequencing of constraints</li>
+          </ul>
+        </section>
+        <section>
+          <h2>This is just a taste</h2>
+          <p>What now?</p>
         </section>
         <section>
           <h3>Developer</h3>
@@ -727,6 +789,7 @@ get isValid() {
           </aside>
         </section>
         <section data-background="#588cb1">
+          <h1>The End</h1>
           <!-- <h1>on('input')</h1> -->
           <!-- <p> -->
           <!--   <div> -->
