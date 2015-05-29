@@ -20,14 +20,15 @@ define('example/app', ['exports', 'ember', 'ember/resolver', 'ember/load-initial
   exports['default'] = App;
 
 });
-define('example/components/x-form', ['exports', 'ember', 'example/utils/form'], function (exports, Ember, Form) {
+define('example/components/x-form', ['exports', 'ember'], function (exports, Ember) {
 
   'use strict';
 
   exports['default'] = Ember['default'].Component.extend({
     init: function init() {
       this._super.apply(this, arguments);
-      this._form = new Form['default']();
+      var Form = this.get('formConstructor');
+      this._form = new Form();
       this._form.struct.on('swap', Ember['default'].run.bind(this, 'reform'));
       this.reform();
     },
@@ -44,7 +45,15 @@ define('example/components/x-form', ['exports', 'ember', 'example/utils/form'], 
       if (!!name) {
         this._form.set(name, e.target.value);
       }
-    }
+    },
+    formConstructor: Ember['default'].computed('type', function () {
+      var type = this.get('type');
+      if (!!type) {
+        return this.container.lookupFactory('form:' + type);
+      } else {
+        return this.container.lookupFactory('util:form');
+      }
+    })
   });
 
 });
@@ -60,6 +69,626 @@ define('example/controllers/object', ['exports', 'ember'], function (exports, Em
 	'use strict';
 
 	exports['default'] = Ember['default'].Controller;
+
+});
+define('example/forms/demonstrate-fraud-check', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  var VISA_REGEX = /^4/;
+  var MASTERCARD_REGEX = /^5[1-5]/;
+  var AMEX_REGEX = /^3[47]/;
+  var DISCOVER_REGEX = /^6(?:011|5)/;
+  var DINERS_CLUB_REGEX = /^3(?:0[0-5]|[68])/;
+  var JCB_REGEX = /^(?:2131|1800|35)/;
+
+  function Form() {
+    var _this = this;
+    this.struct = immstruct({
+      input: {
+        name: "",
+        number: "",
+        cvc: "",
+        exp: ""
+      },
+      type: null,
+      rules: {
+        numberLongEnough: {
+          isNotFulfilled: true
+        },
+        numberPassesLuhnCheck: {
+          isNotFulfilled: true
+        },
+        numberPassesFraudCheck: {
+          isNotFulfilled: true
+        }
+      },
+      progress: {}
+    });
+    this.reference(["input", "number"]).observe(function (path, newValue, oldValue) {
+      console.log("oldValue = ", oldValue);
+      console.log("newValue = ", newValue);
+      console.log("path = ", path);
+      var number = newValue.getIn(["input", "number"]);
+      console.log("number = ", number);
+      _this.validate("numberLongEnough", function (resolve, reject) {
+        if (!number || number.length === 0) {
+          reject("can't be blank");
+        } else if (!_this.type) {
+          reject("not enough digits");
+        }
+
+        switch (_this.type) {
+          case "diners":
+          case "amex":
+            if (number.length === 15) {
+              resolve();
+            } else {
+              reject("(" + number.length + "/15)");
+            }
+          default:
+            if (number.length === 16) {
+              resolve();
+            } else {
+              reject("(" + number.length + "/16)");
+            }
+        }
+      }).then(function () {
+        return _this.validate("numberPassesLuhnCheck", function (resolve, reject) {
+          if (luhnCheck(number)) {
+            resolve();
+          } else {
+            reject("invalid card number");
+          }
+        });
+      }).then(function () {
+        return _this.validate("numberPassesFraudCheck", function (resolve, reject) {
+          //hax
+          window.fraudCheck = {
+            resolve: resolve,
+            reject: reject
+          };
+        });
+      });
+    });
+    this.reference(["input", "exp"]).observe(function (path, newValue, oldValue) {
+      var exp = newValue.getIn(["input", "exp"]);
+      _this.validate("expIsValid", function (resolve, reject) {
+        if (!exp) {
+          reject("can't be blank");
+        } else {
+          var expRegex = /^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/;
+          if (expRegex.test(exp)) {
+            resolve();
+          } else {
+            reject("invalid expiration date");
+          };
+        }
+      });
+    });
+    this.reference(["input", "cvc"]).observe(function (path, newValue, oldValue) {
+      var cvc = newValue.getIn(["input", "cvc"]);
+      _this.validate("cvcIsValid", function (resolve, reject) {
+        if (!cvc) {
+          reject("can't be blank");
+        } else {
+          var cvcRegex = /\d{3,4}/;
+          if (cvcRegex.test(cvc)) {
+            resolve();
+          } else {
+            reject("invalid security code");
+          }
+        }
+      });
+    });
+    this.reference(["input", "name"]).observe(function (path, newValue, oldValue) {
+      var name = newValue.getIn(["input", "name"]);
+      _this.validate("nameIsValid", function (resolve, reject) {
+        if (!name) {
+          reject("can't be blank");
+        } else {
+          if (name.length >= 3) {
+            resolve();
+          } else {
+            reject("name must be at least 3 characters");
+          }
+        }
+      });
+    });
+  }
+
+  Form.prototype = Object.defineProperties({
+
+    filterBy: function filterBy(collection, property, value) {
+      var filterFn = function filterFn(item) {
+        return item[property] === value;
+      };
+      if (typeof value === "undefined") {
+        filteFn = function (item) {
+          return !!item[property];
+        };
+      }
+      return this[collection].filter(filterFn);
+    },
+
+    validate: function validate(ruleName, handler) {
+      var _this = this;
+      _this.cursor(["rules", ruleName]).update(function (attrs) {
+        return attrs.merge({
+          isFulfilled: false,
+          isNotFulfilled: true,
+          isRejected: false,
+          isSettled: false,
+          isPending: true
+        });
+      });
+      return new Promise(handler).then(function (result) {
+        _this.cursor(["rules", ruleName]).update(function (attrs) {
+          return attrs.merge({
+            isFulfilled: true,
+            isNotFulfilled: false,
+            isRejected: false,
+            isSettled: true,
+            isPending: false,
+            result: result
+          });
+        });
+      })["catch"](function (reason) {
+        _this.cursor(["rules", ruleName]).update(function (attrs) {
+          return attrs.merge({
+            isFulfilled: false,
+            isNotFulfilled: true,
+            isRejected: true,
+            isSettled: true,
+            isPending: false,
+            reason: reason
+          });
+        });
+        throw reason;
+      });
+    },
+    reference: function reference(path) {
+      return this.struct.reference(path);
+    },
+    cursor: function cursor(path) {
+      return this.struct.cursor(path);
+    },
+    toJSON: function toJSON() {
+      return Ember['default'].merge(this.cursor().toJSON(), {
+        type: this.type,
+        isValid: this.isValid,
+        isInvalid: this.isInvalid,
+        progress: this.progress
+      });
+    },
+    set: function set(name, value) {
+      this.struct.cursor("input").update(function (map) {
+        return map.set(name, value);
+      });
+    }
+  }, {
+    progress: {
+      get: function () {
+        var _this = this;
+        function ruleStats(stateName) {
+          var rules = _this.filterBy("rules", "is" + stateName, true);
+          var ratio = rules.length / _this.rules.length;
+          return {
+            count: rules.length,
+            ratio: ratio,
+            percentage: Math.round(ratio * 100)
+          };
+        }
+        return {
+          fulfilled: ruleStats("Fulfilled"),
+          rejected: ruleStats("Rejected"),
+          pending: ruleStats("Pending"),
+          settled: ruleStats("Settled")
+        };
+      },
+      configurable: true,
+      enumerable: true
+    },
+    rules: {
+      get: function () {
+        var ruleData = this.cursor("rules").toJSON();
+        return Object.keys(ruleData).map(function (name) {
+          return ruleData[name];
+        });
+      },
+      configurable: true,
+      enumerable: true
+    },
+    type: {
+      get: function () {
+        var number = this.cursor("input").get("number");
+        if (number.match(VISA_REGEX)) {
+          return "visa";
+        } else if (number.match(MASTERCARD_REGEX)) {
+          return "mastercard";
+        } else if (number.match(AMEX_REGEX)) {
+          return "amex";
+        } else if (number.match(DISCOVER_REGEX)) {
+          return "discover";
+        } else if (number.match(DINERS_CLUB_REGEX)) {
+          return "diners";
+        } else if (number.match(JCB_REGEX)) {
+          return "jcb";
+        } else {
+          return undefined;
+        }
+      },
+      configurable: true,
+      enumerable: true
+    },
+    input: {
+      get: function () {
+        return this.cursor("input").toJSON();
+      },
+      configurable: true,
+      enumerable: true
+    },
+    isValid: {
+      get: function () {
+        var rules = this.rules;
+        for (var i = 0; i < rules.length; i++) {
+          if (!rules[i].isFulfilled) {
+            return false;
+          }
+        }
+        return true;
+        return rules.reduce(function (currentValue, rule) {
+          return currentValue && rule.isFulfilled;
+        }, true);
+      },
+      configurable: true,
+      enumerable: true
+    },
+    isInvalid: {
+      get: function () {
+        return !this.isValid;
+      },
+      configurable: true,
+      enumerable: true
+    }
+  });
+
+  function luhnCheck(number) {
+    // accept only digits, dashes or spaces
+    if (/[^0-9-\s]+/.test(number)) {
+      return false;
+    }
+
+    // The Luhn Algorithm. It's so pretty.
+    var nCheck = 0,
+        nDigit = 0,
+        bEven = false;
+    number = number.replace(/\D/g, "");
+
+    for (var n = number.length - 1; n >= 0; n--) {
+      var cDigit = number.charAt(n);
+      nDigit = parseInt(cDigit, 10);
+
+      if (bEven) {
+        if ((nDigit *= 2) > 9) {
+          nDigit -= 9;
+        }
+      }
+
+      nCheck += nDigit;
+      bEven = !bEven;
+    }
+    return nCheck % 10 === 0;
+  }
+
+  exports['default'] = Form;
+
+});
+define('example/forms/simple-validation', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  var VISA_REGEX = /^4/;
+  var MASTERCARD_REGEX = /^5[1-5]/;
+  var AMEX_REGEX = /^3[47]/;
+  var DISCOVER_REGEX = /^6(?:011|5)/;
+  var DINERS_CLUB_REGEX = /^3(?:0[0-5]|[68])/;
+  var JCB_REGEX = /^(?:2131|1800|35)/;
+
+  function Form() {
+    var _this = this;
+    this.struct = immstruct({
+      input: {
+        name: "",
+        number: "",
+        cvc: "",
+        exp: ""
+      },
+      type: null,
+      rules: {
+        numberLongEnough: {
+          isNotFulfilled: true
+        }
+      },
+      progress: {}
+    });
+    this.reference(["input", "number"]).observe(function (path, newValue, oldValue) {
+      console.log("oldValue = ", oldValue);
+      console.log("newValue = ", newValue);
+      console.log("path = ", path);
+      var number = newValue.getIn(["input", "number"]);
+      console.log("number = ", number);
+      _this.validate("numberLongEnough", function (resolve, reject) {
+        if (!number || number.length === 0) {
+          reject("can't be blank");
+        } else if (!_this.type) {
+          reject("not enough digits");
+        }
+
+        switch (_this.type) {
+          case "diners":
+          case "amex":
+            if (number.length === 15) {
+              resolve();
+            } else {
+              reject("(" + number.length + "/15)");
+            }
+          default:
+            if (number.length === 16) {
+              resolve();
+            } else {
+              reject("(" + number.length + "/16)");
+            }
+        }
+      }).then(function () {
+        return _this.validate("numberPassesLuhnCheck", function (resolve, reject) {
+          if (luhnCheck(number)) {
+            resolve();
+          } else {
+            reject("invalid card number");
+          }
+        });
+      }).then(function () {
+        return _this.validate("numberPassesFraudCheck", function (resolve, reject) {
+          //hax
+          window.fraudCheck = {
+            resolve: resolve,
+            reject: reject
+          };
+        });
+      });
+    });
+    this.reference(["input", "exp"]).observe(function (path, newValue, oldValue) {
+      var exp = newValue.getIn(["input", "exp"]);
+      _this.validate("expIsValid", function (resolve, reject) {
+        if (!exp) {
+          reject("can't be blank");
+        } else {
+          var expRegex = /^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/;
+          if (expRegex.test(exp)) {
+            resolve();
+          } else {
+            reject("invalid expiration date");
+          };
+        }
+      });
+    });
+    this.reference(["input", "cvc"]).observe(function (path, newValue, oldValue) {
+      var cvc = newValue.getIn(["input", "cvc"]);
+      _this.validate("cvcIsValid", function (resolve, reject) {
+        if (!cvc) {
+          reject("can't be blank");
+        } else {
+          var cvcRegex = /\d{3,4}/;
+          if (cvcRegex.test(cvc)) {
+            resolve();
+          } else {
+            reject("invalid security code");
+          }
+        }
+      });
+    });
+    this.reference(["input", "name"]).observe(function (path, newValue, oldValue) {
+      var name = newValue.getIn(["input", "name"]);
+      _this.validate("nameIsValid", function (resolve, reject) {
+        if (!name) {
+          reject("can't be blank");
+        } else {
+          if (name.length >= 3) {
+            resolve();
+          } else {
+            reject("name must be at least 3 characters");
+          }
+        }
+      });
+    });
+  }
+
+  Form.prototype = Object.defineProperties({
+
+    filterBy: function filterBy(collection, property, value) {
+      var filterFn = function filterFn(item) {
+        return item[property] === value;
+      };
+      if (typeof value === "undefined") {
+        filteFn = function (item) {
+          return !!item[property];
+        };
+      }
+      return this[collection].filter(filterFn);
+    },
+
+    validate: function validate(ruleName, handler) {
+      var _this = this;
+      _this.cursor(["rules", ruleName]).update(function (attrs) {
+        return attrs.merge({
+          isFulfilled: false,
+          isNotFulfilled: true,
+          isRejected: false,
+          isSettled: false,
+          isPending: true
+        });
+      });
+      return new Promise(handler).then(function (result) {
+        _this.cursor(["rules", ruleName]).update(function (attrs) {
+          return attrs.merge({
+            isFulfilled: true,
+            isNotFulfilled: false,
+            isRejected: false,
+            isSettled: true,
+            isPending: false,
+            result: result
+          });
+        });
+      })["catch"](function (reason) {
+        _this.cursor(["rules", ruleName]).update(function (attrs) {
+          return attrs.merge({
+            isFulfilled: false,
+            isNotFulfilled: true,
+            isRejected: true,
+            isSettled: true,
+            isPending: false,
+            reason: reason
+          });
+        });
+        throw reason;
+      });
+    },
+    reference: function reference(path) {
+      return this.struct.reference(path);
+    },
+    cursor: function cursor(path) {
+      return this.struct.cursor(path);
+    },
+    toJSON: function toJSON() {
+      return Ember['default'].merge(this.cursor().toJSON(), {
+        type: this.type,
+        isValid: this.isValid,
+        isInvalid: this.isInvalid,
+        progress: this.progress
+      });
+    },
+    set: function set(name, value) {
+      this.struct.cursor("input").update(function (map) {
+        return map.set(name, value);
+      });
+    }
+  }, {
+    progress: {
+      get: function () {
+        var _this = this;
+        function ruleStats(stateName) {
+          var rules = _this.filterBy("rules", "is" + stateName, true);
+          var ratio = rules.length / _this.rules.length;
+          return {
+            count: rules.length,
+            ratio: ratio,
+            percentage: Math.round(ratio * 100)
+          };
+        }
+        return {
+          fulfilled: ruleStats("Fulfilled"),
+          rejected: ruleStats("Rejected"),
+          pending: ruleStats("Pending"),
+          settled: ruleStats("Settled")
+        };
+      },
+      configurable: true,
+      enumerable: true
+    },
+    rules: {
+      get: function () {
+        var ruleData = this.cursor("rules").toJSON();
+        return Object.keys(ruleData).map(function (name) {
+          return ruleData[name];
+        });
+      },
+      configurable: true,
+      enumerable: true
+    },
+    type: {
+      get: function () {
+        var number = this.cursor("input").get("number");
+        if (number.match(VISA_REGEX)) {
+          return "visa";
+        } else if (number.match(MASTERCARD_REGEX)) {
+          return "mastercard";
+        } else if (number.match(AMEX_REGEX)) {
+          return "amex";
+        } else if (number.match(DISCOVER_REGEX)) {
+          return "discover";
+        } else if (number.match(DINERS_CLUB_REGEX)) {
+          return "diners";
+        } else if (number.match(JCB_REGEX)) {
+          return "jcb";
+        } else {
+          return undefined;
+        }
+      },
+      configurable: true,
+      enumerable: true
+    },
+    input: {
+      get: function () {
+        return this.cursor("input").toJSON();
+      },
+      configurable: true,
+      enumerable: true
+    },
+    isValid: {
+      get: function () {
+        var rules = this.rules;
+        for (var i = 0; i < rules.length; i++) {
+          if (!rules[i].isFulfilled) {
+            return false;
+          }
+        }
+        return true;
+        return rules.reduce(function (currentValue, rule) {
+          return currentValue && rule.isFulfilled;
+        }, true);
+      },
+      configurable: true,
+      enumerable: true
+    },
+    isInvalid: {
+      get: function () {
+        return !this.isValid;
+      },
+      configurable: true,
+      enumerable: true
+    }
+  });
+
+  function luhnCheck(number) {
+    // accept only digits, dashes or spaces
+    if (/[^0-9-\s]+/.test(number)) {
+      return false;
+    }
+
+    // The Luhn Algorithm. It's so pretty.
+    var nCheck = 0,
+        nDigit = 0,
+        bEven = false;
+    number = number.replace(/\D/g, "");
+
+    for (var n = number.length - 1; n >= 0; n--) {
+      var cDigit = number.charAt(n);
+      nDigit = parseInt(cDigit, 10);
+
+      if (bEven) {
+        if ((nDigit *= 2) > 9) {
+          nDigit -= 9;
+        }
+      }
+
+      nCheck += nDigit;
+      bEven = !bEven;
+    }
+    return nCheck % 10 === 0;
+  }
+
+  exports['default'] = Form;
 
 });
 define('example/helpers/x-not', ['exports', 'ember'], function (exports, Ember) {
@@ -724,7 +1353,7 @@ define('example/templates/components/demonstrate-fraud-check', ['exports'], func
             var morph1 = dom.createMorphAt(dom.childAt(fragment, [7]),1,1);
             set(env, context, "form", blockArguments[0]);
             content(env, morph0, context, "form.type");
-            attribute(env, attrMorph0, element0, "disabled", get(env, context, "form.rules.numberPassesFraudCheck.isNotFulfilled"));
+            attribute(env, attrMorph0, element0, "disabled", get(env, context, "form.isInvalid"));
             block(env, morph1, context, "if", [get(env, context, "form.rules.numberPassesFraudCheck.isPending")], {}, child0, null);
             return fragment;
           }
@@ -765,7 +1394,7 @@ define('example/templates/components/demonstrate-fraud-check', ['exports'], func
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "x-form", [], {}, child0, null);
+          block(env, morph0, context, "x-form", [], {"type": "demonstrate-fraud-check"}, child0, null);
           return fragment;
         }
       };
@@ -1444,7 +2073,7 @@ define('example/templates/components/show-dependencies', ['exports'], function (
             content(env, morph0, context, "form.type");
             block(env, morph1, context, "if", [get(env, context, "form.rules.numberLongEnough.isRejected")], {}, child0, child1);
             block(env, morph2, context, "if", [get(env, context, "form.rules.numberPassesFraudCheck.isPending")], {}, child2, null);
-            attribute(env, attrMorph0, element1, "disabled", get(env, context, "form.rules.numberPassesFraudCheck.isNotFulfilled"));
+            attribute(env, attrMorph0, element1, "disabled", get(env, context, "form.isInvalid"));
             return fragment;
           }
         };
@@ -1484,7 +2113,7 @@ define('example/templates/components/show-dependencies', ['exports'], function (
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "x-form", [], {}, child0, null);
+          block(env, morph0, context, "x-form", [], {"type": "demonstrate-fraud-check"}, child0, null);
           return fragment;
         }
       };
@@ -1600,7 +2229,7 @@ define('example/templates/components/simple-validation', ['exports'], function (
             var attrMorph0 = dom.createAttrMorph(element0, 'disabled');
             set(env, context, "form", blockArguments[0]);
             content(env, morph0, context, "form.type");
-            attribute(env, attrMorph0, element0, "disabled", get(env, context, "form.rules.numberPassesLuhnCheck.isNotFulfilled"));
+            attribute(env, attrMorph0, element0, "disabled", get(env, context, "form.isInvalid"));
             return fragment;
           }
         };
@@ -1640,7 +2269,7 @@ define('example/templates/components/simple-validation', ['exports'], function (
           var morph0 = dom.createMorphAt(fragment,0,0,contextualElement);
           dom.insertBoundary(fragment, null);
           dom.insertBoundary(fragment, 0);
-          block(env, morph0, context, "x-form", [], {}, child0, null);
+          block(env, morph0, context, "x-form", [], {"type": "simple-validation"}, child0, null);
           return fragment;
         }
       };
@@ -2164,7 +2793,7 @@ catch(err) {
 if (runningTests) {
   require("example/tests/test-helper");
 } else {
-  require("example/app")["default"].create({"name":"example","version":"0.0.0.ac888e8a"});
+  require("example/app")["default"].create({"name":"example","version":"0.0.0.401dc99f"});
 }
 
 /* jshint ignore:end */

@@ -1,9 +1,9 @@
 import Ember from 'ember';
-import Form from '../utils/form';
 
 export default Ember.Component.extend({
   init() {
     this._super.apply(this, arguments);
+    const Form = this.get('formConstructor');
     this._form = new Form();
     this._form.struct.on("swap", Ember.run.bind(this, "reform"));
     this.reform();
@@ -21,5 +21,13 @@ export default Ember.Component.extend({
     if (!!name) {
       this._form.set(name, e.target.value);
     }
-  }
+  },
+  formConstructor: Ember.computed('type', function() {
+    const type = this.get('type');
+    if (!!type) {
+      return this.container.lookupFactory(`form:${type}`);
+    } else {
+      return this.container.lookupFactory('util:form');
+    }
+  })
 });

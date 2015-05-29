@@ -1,5 +1,5 @@
 {{#demo-frame}}
-  {{#x-form as |form|}}
+  {{#x-form type="demonstrate-fraud-check" as |form|}}
     <div style="text-align: left">
       Card Type: {{form.type}}
     </div>
@@ -17,7 +17,7 @@
       {{/if}}
     </div>
     <div>
-      <button disabled={{form.rules.numberPassesFraudCheck.isNotFulfilled}}>Submit</button>
+      <button disabled={{form.isInvalid}}>Submit</button>
     </div>
   {{/x-form}}
 {{/demo-frame}}
